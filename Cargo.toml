@@ -1,6 +1,6 @@
 [package]
 name = "plot_starter"
-version = "0.34.4"
+version = "0.34.5"
 edition = "2024"
 description = "A simple library to quickly plot data using `egui_plot`."
 license = "MIT"

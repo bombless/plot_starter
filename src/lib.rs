@@ -14,15 +14,16 @@
 //!  Then, use it in your code:
 //! 
 //!  ```rust
-//!  use plot_starter::{Plotter, Chart};
+//!  use plot_starter::{Plotter, Chart, Color, arange};
+//! fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let plotter = Plotter::new();
 //! 
-//!  fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!      let plotter = Plotter::new();
-//!      let data = (-500..=500).map(|x| x as f64 / 50.0).map(|x| (x, x.sin()));
-//!      Chart::on(&plotter).data(data);
+//!     Chart::on(&plotter)
+//!         .data(arange(-10.0 .. 10.0, 0.1).map(|x| (x, x.sin())))
+//!         .color(Color::RED);
 //! 
-//!      plotter.present()
-//!  }
+//!     plotter.present()
+//! }
 //!  ```
 //! 
 //!  ## Running the Example
@@ -36,6 +37,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::error::Error;
+use std::ops::Range;
 use eframe::egui::{self, Color32, Context, CentralPanel};
 use eframe::Frame;
 use egui_plot::{Line, Plot, PlotPoint, PlotPoints};
@@ -178,4 +180,40 @@ impl eframe::App for PlotterApp {
             });
         });
     }
+}
+
+/// Data structure to be used by `arange()`
+pub struct ARange {
+    range: Range<f64>,
+    step: f64,
+    previous: Option<f64>,
+}
+
+impl Iterator for ARange {
+    type Item = f64;
+
+    fn next(&mut self) -> Option<f64> {
+        if let Some(previous) = self.previous {
+            let ret = previous + self.step;
+            if ret > self.range.end {
+                None
+            } else {
+                self.previous = Some(ret);
+                Some(ret)
+            }
+        } else {
+            self.previous = Some(self.range.start);
+            Some(self.range.start)
+        }
+    }
+}
+
+/// Create f64 stream with step within range.
+///
+/// e.g.
+/// ```rust
+/// use plot_starter::arange;
+/// arange(-10.0 .. 10.0, 0.1);
+pub fn arange(range: Range<f64>, step: f64) -> ARange {
+    ARange { range, step, previous: None }
 }
