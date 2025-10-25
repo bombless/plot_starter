@@ -71,6 +71,21 @@ impl<'a> Chart<'a> {
         self.plotter.data(self.id, data.map(|(x, y)| PlotPoint {x, y}).collect());
         self
     }
+    /// Sets data from a step, a range and a callback function.
+    ///
+    /// example:
+    /// ```rust
+    /// use plot_starter::{Plotter, Chart, Color, arange};
+    /// let plotter = Plotter::new();
+    ///
+    /// Chart::on(&plotter)
+    ///  .time_series(0.1, -10.0 .. 10.0, f64::sin)
+    ///  .color(Color::RED);
+    /// ```
+    pub fn time_series(&'a self, step: f64, range: Range<f64>, mut f: impl FnMut(f64) -> f64) -> &'a Self {
+        self.plotter.data(self.id, arange(range, step).map(|x| PlotPoint {x, y: f(x)}).collect());
+        self
+    }
     /// Sets the color of the chart.
     ///
     /// # Arguments
