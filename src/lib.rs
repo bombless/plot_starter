@@ -1,3 +1,38 @@
+//!
+//! 
+//! A simple library to quickly plot data using `egui_plot`.
+//! 
+//!  ## Usage
+//! 
+//! Add `plot_starter` to your `Cargo.toml`:
+//! 
+//!  ```toml
+//!  [dependencies]
+//!  plot_starter = "0.34"
+//!  ```
+//! 
+//!  Then, use it in your code:
+//! 
+//!  ```rust
+//!  use plot_starter::{Plotter, Chart};
+//! 
+//!  fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!      let plotter = Plotter::new();
+//!      let data = (-500..=500).map(|x| x as f64 / 50.0).map(|x| (x, x.sin()));
+//!      Chart::on(&plotter).data(data);
+//! 
+//!      plotter.present()
+//!  }
+//!  ```
+//! 
+//!  ## Running the Example
+//! 
+//!  To run the included demo, clone the repository and run:
+//! 
+//!  ```bash
+//!  cargo run --example demo
+//!  ```
+
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::error::Error;
@@ -5,19 +40,37 @@ use eframe::egui::{self, Color32, Context, CentralPanel};
 use eframe::Frame;
 use egui_plot::{Line, Plot, PlotPoint, PlotPoints};
 
-pub struct Chart<'a> {
+/// Represents a chart to be plotted.
+///
+/// A `Chart` is created using `Chart::on(&plotter)` and can be customized by chaining methods like `data` and `color`.
+ pub struct Chart<'a> {
     id: usize,
     plotter: &'a Plotter,
 }
 
 impl<'a> Chart<'a> {
+    /// Creates a new chart on the given `Plotter`.
+    ///
+    /// # Arguments
+    ///
+    /// * `plotter` - A reference to the `Plotter` that will display the chart.
     pub fn on(plotter: &'a Plotter) -> Self {
         Chart { id: plotter.next_id(), plotter }
     }
+    /// Sets the data for the chart.
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - An iterator of tuples, where each tuple represents a point (x, y) in the chart.
     pub fn data(&'a self, data: impl Iterator<Item = (f64, f64)>) -> &'a Self {
         self.plotter.data(self.id, data.map(|(x, y)| PlotPoint {x, y}).collect());
         self
     }
+    /// Sets the color of the chart.
+    ///
+    /// # Arguments
+    ///
+    /// * `color` - The `Color32` to use for the chart's line.
     pub fn color(&'a self, color: Color32) -> &'a Self {
         self.plotter.color(self.id, color);
         self
@@ -35,7 +88,7 @@ impl ChartData {
     }
 }
 
-pub struct PlotterApp {
+struct PlotterApp {
     charts: HashMap<usize, ChartData>,
 }
 
@@ -47,12 +100,16 @@ impl From<Plotter> for PlotterApp {
     }
 }
 
+/// The main struct for creating and managing plots.
+///
+/// The `Plotter` is the entry point for creating charts and displaying them in a window.
 pub struct Plotter {
     next_id: RefCell<usize>,
     charts: RefCell<HashMap<usize, ChartData>>,
 }
 
 impl Plotter {
+    /// Creates a new `Plotter` instance.
     pub fn new() -> Self {
         Self {
             charts: RefCell::new(HashMap::new()),
@@ -82,6 +139,9 @@ impl Plotter {
         }
     }
 
+    /// Displays the plot in a native window.
+    ///
+    /// This method consumes the `Plotter` and runs the `eframe` application loop.
     pub fn present(self) -> Result<(), Box<dyn Error>> {
 
         let native_options = eframe::NativeOptions {
