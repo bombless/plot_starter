@@ -1,11 +1,12 @@
 [package]
 name = "plot_starter"
-version = "0.34.1"
+version = "0.34.2"
 edition = "2024"
 description = "A simple library to quickly plot data using `egui_plot`."
 license = "MIT"
 license-file = "LICENSE.txt"
 readme = "README.md"
+repository = "https://github.com/bombless/plot_starter"
 
 [dependencies]
 eframe = "0.33.0"
