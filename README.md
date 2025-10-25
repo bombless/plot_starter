@@ -8,7 +8,7 @@ Add `plot_starter` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plot_starter = { git = "https://github.com/your-repo/plot_starter.git" } # Replace with the actual path once published
+plot_starter = "0.34"
 ```
 
 Then, use it in your code:
