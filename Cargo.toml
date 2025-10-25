@@ -2,6 +2,9 @@
 name = "plot_starter"
 version = "0.34.0"
 edition = "2024"
+description = "A simple library to quickly plot data using `egui_plot`."
+license = "MIT"
+license-file = "LICENSE.txt"
 
 [dependencies]
 eframe = "0.33.0"
