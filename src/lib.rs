@@ -40,6 +40,9 @@ use eframe::egui::{self, Color32, Context, CentralPanel};
 use eframe::Frame;
 use egui_plot::{Line, Plot, PlotPoint, PlotPoints};
 
+/// color of line
+pub use eframe::egui::Color32 as Color;
+
 /// Represents a chart to be plotted.
 ///
 /// A `Chart` is created using `Chart::on(&plotter)` and can be customized by chaining methods like `data` and `color`.
@@ -169,11 +172,9 @@ impl eframe::App for PlotterApp {
         CentralPanel::default().show(ctx, |ui| {
             Plot::new("").show(ui, |plot_ui| {
                 for data in self.charts.values() {
-                    let points = Line::new("", PlotPoints::Borrowed(&data.data));
+                    let points = Line::new("", PlotPoints::Borrowed(&data.data)).color(data.color);
                     plot_ui.line(points)
                 }
-
-
             });
         });
     }
